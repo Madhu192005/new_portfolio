@@ -1,3 +1,17 @@
+const roleElements = document.querySelectorAll('.role');
+
+if (roleElements.length) {
+    let activeRoleIndex = 0;
+
+    setInterval(() => {
+        roleElements.forEach((role, index) => {
+            role.classList.toggle('active', index === activeRoleIndex);
+        });
+
+        activeRoleIndex = (activeRoleIndex + 1) % roleElements.length;
+    }, 2000);
+}
+
 // Custom Cursor
 const cursorDot = document.querySelector('.cursor-dot');
 const cursorOutline = document.querySelector('.cursor-outline');
@@ -63,34 +77,56 @@ function reveal() {
 window.addEventListener("scroll", reveal);
 reveal(); // Trigger on load
 
-// Submit Form Handler (Mock)
-document.querySelector('.submit-btn')?.addEventListener('click', (e) => {
+// Submit Form Handler
+const contactForm = document.querySelector('.contact-form');
+const submitBtn = document.querySelector('.submit-btn');
+
+submitBtn?.addEventListener('click', async (e) => {
     e.preventDefault();
     const btn = e.target;
     const originalText = btn.innerText;
-    
-    // Simple validation check
-    const name = document.getElementById('name').value;
-    const email = document.getElementById('email').value;
-    const message = document.getElementById('message').value;
-    
-    if(!name || !email || !message) {
-        alert("Please fill in all required fields (Name, Email, Message)");
+
+    const name = document.getElementById('name').value.trim();
+    const email = document.getElementById('email').value.trim();
+    const phone = document.getElementById('phone').value.trim();
+    const message = document.getElementById('message').value.trim();
+
+    if (!name || !email || !message) {
+        alert('Please fill in all required fields (Name, Email, Message)');
         return;
     }
 
-    btn.innerText = "Sending...";
-    
-    setTimeout(() => {
-        btn.innerText = "Message Sent!";
-        btn.style.backgroundColor = "#4ade80"; // Green for success
-        btn.style.borderColor = "#4ade80";
-        document.querySelector('.contact-form').reset();
-        
+    btn.innerText = 'Sending...';
+    btn.disabled = true;
+
+    try {
+        const response = await fetch('/api/contact', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ name, email, phone, message }),
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            throw new Error(data.error || 'Unable to send message.');
+        }
+
+        btn.innerText = 'Message Sent!';
+        btn.style.backgroundColor = '#4ade80';
+        btn.style.borderColor = '#4ade80';
+        contactForm.reset();
+    } catch (error) {
+        alert(error.message || 'Unable to send message. Please try again later.');
+        btn.innerText = originalText;
+    } finally {
+        btn.disabled = false;
         setTimeout(() => {
             btn.innerText = originalText;
-            btn.style.backgroundColor = "";
-            btn.style.borderColor = "";
+            btn.style.backgroundColor = '';
+            btn.style.borderColor = '';
         }, 3000);
-    }, 1500);
+    }
 });

@@ -244,6 +244,47 @@ a {
     margin-bottom: 1rem;
 }
 
+.role-rotator {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.8rem;
+    margin-bottom: 1rem;
+    min-height: 3.2rem;
+}
+
+.role-label {
+    font-size: 1.4rem;
+    color: var(--text-primary);
+    font-weight: 600;
+}
+
+.roles {
+    position: relative;
+    display: inline-block;
+    min-width: 250px;
+    min-height: 2.6rem;
+}
+
+.role {
+    position: absolute;
+    left: 0;
+    top: 0;
+    opacity: 0;
+    transform: translateY(12px);
+    transition: opacity 0.6s ease, transform 0.6s ease;
+    font-size: 1.7rem;
+    line-height: 1.2;
+    color: var(--accent);
+    font-weight: 700;
+    font-family: var(--font-body);
+}
+
+.role.active {
+    opacity: 1;
+    transform: translateY(0);
+}
+
 .subtitle {
     font-size: 1.8rem;
     color: var(--text-secondary);
